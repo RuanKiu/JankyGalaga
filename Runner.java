@@ -1,5 +1,6 @@
 import java.awt.*;
 import javax.swing.*;
+import javax.sound.sampled.*;
 import java.awt.event.*;
 import javax.imageio.*;
 import java.io.*;
@@ -11,8 +12,9 @@ public class Runner
   {
     JFrame window = new JFrame();
     CustomPanel container = new CustomPanel();
-    container.setSize(1500, 1500);
+    container.setSize(700, 700);
     window.setSize(container.getSize());
+    window.setResizable(false);
     window.add(container);
     window.addKeyListener(container);
     window.addMouseListener(container);
@@ -29,7 +31,9 @@ class CustomPanel extends JPanel implements ActionListener, MouseListener, KeyLi
   private int currentXPos, currentYPos;
   private int speedMultiplier;
   private ArrayList<Rocket> rockets;
-  private Image spaceship;
+  private Image spaceshipSprite;
+  private Image rocketSprite;
+  private SoundPlayer player;
 
   public CustomPanel()
   {
@@ -38,28 +42,29 @@ class CustomPanel extends JPanel implements ActionListener, MouseListener, KeyLi
     setVisible(true);
     time.start();
     direction = 0;
-    currentXPos = 750;
-    currentYPos = 800;
+    currentXPos = 350;
+    currentYPos = 500;
     speedMultiplier = 3;
     rockets = new ArrayList<Rocket>();
     try 
     {
-      spaceship = ImageIO.read(new File("spaceship.png"));
+      spaceshipSprite = ImageIO.read(new File("spaceship.png"));
+      rocketSprite = ImageIO.read(new File("rocket.png"));
     }
     catch (Exception e) {}
+    player = new SoundPlayer("music.wav");
   }
 
   public void paintComponent(Graphics g)
   {
-    g.drawImage(spaceship, currentXPos - (spaceship.getWidth(null)/2), currentYPos, null);
-    paintRockets(g); 
-
+    paintRockets(g);
+    g.drawImage(spaceshipSprite, currentXPos - (spaceshipSprite.getWidth(null)/2), currentYPos, null);
   }
 
   public void paintRockets(Graphics g)
   {
     for (Rocket rocket : rockets) {
-      g.fillOval(rocket.getX(), currentYPos - rocket.getY(), 10, 10);
+      g.drawImage(rocketSprite, rocket.getX() - (rocketSprite.getWidth(null)/2), currentYPos - rocket.getY(), null);
     }
   }
 
@@ -146,5 +151,28 @@ class Rocket
   public int getX()
   {
     return x;
+  }
+}
+
+class SoundPlayer
+{
+  private File audioFile;
+  private AudioInputStream input;
+  private Clip audioClip;
+  public SoundPlayer (String filename) 
+  {
+    try {
+      audioFile = new File(filename).getAbsoluteFile();
+      input  = AudioSystem.getAudioInputStream(audioFile);
+      audioClip = AudioSystem.getClip();
+      audioClip.open(input);
+      audioClip.loop(Clip.LOOP_CONTINUOUSLY);
+    }
+    catch (Exception e) {}
+  }
+
+  public void play()
+  {
+    audioClip.start();
   }
 }
