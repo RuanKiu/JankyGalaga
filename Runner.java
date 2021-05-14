@@ -1,3 +1,11 @@
+/* 
+ * Made by Ryan Qiu
+ * A/D or Left/Right to move
+ * Click or Space to Shoot
+ * Music: 8 Bit Menu -  David Renda
+ * 
+ */
+
 import java.awt.*;
 import javax.swing.*;
 import javax.sound.sampled.*;
@@ -73,6 +81,8 @@ class CustomPanel extends JPanel implements ActionListener, MouseListener, KeyLi
   public void actionPerformed(ActionEvent e) 
   {
     currentXPos += direction * speedMultiplier;
+    if (currentXPos <= 10 || currentXPos >= 690)
+      currentXPos -= direction * (speedMultiplier + 2);
 
     for (int i = 0; i < rockets.size(); i++) {
       if (rockets.get(i).getY() > 700) {
@@ -100,6 +110,7 @@ class CustomPanel extends JPanel implements ActionListener, MouseListener, KeyLi
       case KeyEvent.VK_D: direction = 1; break;
       case KeyEvent.VK_RIGHT: direction = 1; break;
       case KeyEvent.VK_LEFT: direction = -1; break;
+      case KeyEvent.VK_SPACE: addRocket(); break;
     }
   }
 
@@ -114,8 +125,7 @@ class CustomPanel extends JPanel implements ActionListener, MouseListener, KeyLi
 
   public void mouseClicked(MouseEvent e) 
   {
-    Rocket nRocket = new Rocket(currentXPos, 7);
-    rockets.add(nRocket); 
+    addRocket();
   }
 
   public void mousePressed(MouseEvent e){}
@@ -123,6 +133,11 @@ class CustomPanel extends JPanel implements ActionListener, MouseListener, KeyLi
   public void mouseEntered(MouseEvent e){}
   public void mouseExited(MouseEvent e){}
 
+  public void addRocket()
+  {
+    Rocket nRocket = new Rocket(currentXPos, 7);
+    rockets.add(nRocket);    
+  }
 }
 
 class Rocket 
