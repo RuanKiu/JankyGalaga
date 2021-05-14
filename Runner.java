@@ -65,6 +65,7 @@ class CustomPanel extends JPanel implements ActionListener, MouseListener, KeyLi
 
   public void paintComponent(Graphics g)
   {
+    super.paintComponent(g);
     paintRockets(g);
     g.drawImage(spaceshipSprite, currentXPos - (spaceshipSprite.getWidth(null)/2), currentYPos, null);
   }
